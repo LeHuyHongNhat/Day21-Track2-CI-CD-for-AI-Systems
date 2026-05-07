@@ -70,6 +70,10 @@ jobs:
 
       - name: Train model
         run: python src/train.py
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || '' }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME || '' }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD || '' }}
 
       - name: Read metrics
         id: read_metrics
@@ -90,11 +94,13 @@ jobs:
         env:
           CLOUD_BUCKET: ${{ secrets.CLOUD_BUCKET }}
 
-      - name: Save metrics as artifact
+      - name: Save metrics and report as artifacts
         uses: actions/upload-artifact@v4
         with:
           name: metrics
-          path: outputs/metrics.json
+          path: |
+            outputs/metrics.json
+            outputs/report.txt
 
 
   # ---------------------------------------------------------------------------
@@ -123,12 +129,69 @@ jobs:
   # JOB 4 - DEPLOY
   # Trien khai len VM qua SSH.
   # Chi chay khi Job 3 (Eval) hoan thanh thanh cong.
+  # Bonus 4: Kiem tra accuracy moi >= accuracy cu truoc khi deploy.
   # ---------------------------------------------------------------------------
   deploy:
     name: Deploy
-    needs: eval
+    needs: [train, eval]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install boto3
+        run: pip install boto3
+
+      - name: Authenticate to Cloud Storage
+        run: |
+          echo '${{ secrets.CLOUD_CREDENTIALS }}' > /tmp/creds.json
+          ACCESS_KEY=$(python -c "import json; print(json.load(open('/tmp/creds.json'))['aws_access_key_id'])")
+          SECRET_KEY=$(python -c "import json; print(json.load(open('/tmp/creds.json'))['aws_secret_access_key'])")
+          echo "AWS_ACCESS_KEY_ID=$ACCESS_KEY" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=$SECRET_KEY" >> $GITHUB_ENV
+          echo "AWS_DEFAULT_REGION=us-east-1" >> $GITHUB_ENV
+
+      - name: Rollback check (Bonus 4)
+        run: |
+          python - <<'EOF'
+          import boto3, json, os, sys
+
+          BUCKET = os.environ["CLOUD_BUCKET"]
+          NEW_ACC = float("${{ needs.train.outputs.accuracy }}")
+          KEY = "models/latest/previous_metrics.json"
+          s3 = boto3.client("s3")
+
+          # Try to download previous metrics
+          import tempfile
+          tmp = tempfile.NamedTemporaryFile(delete=False)
+          tmp.close()
+          try:
+              s3.download_file(BUCKET, KEY, tmp.name)
+              with open(tmp.name) as f:
+                  prev = json.load(f)
+              prev_acc = float(prev["accuracy"])
+              print(f"Previous accuracy: {prev_acc:.4f} | New accuracy: {NEW_ACC:.4f}")
+
+              if NEW_ACC < prev_acc:
+                  print(f"BLOCKED: New accuracy {NEW_ACC:.4f} < previous {prev_acc:.4f}. Huy deploy.")
+                  sys.exit(1)
+
+              print(f"PASSED: New accuracy {NEW_ACC:.4f} >= previous {prev_acc:.4f}. Proceeding with deploy.")
+          except Exception as e:
+              print(f"No previous metrics found ({e}). First deploy, proceeding.")
+
+          # Save current accuracy as checkpoint for next deploy
+          tmp2 = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json')
+          json.dump({"accuracy": NEW_ACC}, tmp2)
+          tmp2.close()
+          s3.upload_file(tmp2.name, BUCKET, KEY)
+          print("Checkpoint metrics saved to S3.")
+          EOF
+        env:
+          CLOUD_BUCKET: ${{ secrets.CLOUD_BUCKET }}
 
       - name: SSH deploy to VM
         uses: appleboy/ssh-action@v1.0.3
