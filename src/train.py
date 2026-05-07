@@ -73,7 +73,7 @@ def train(
 
 
 if __name__ == "__main__":
-    with open("params.yaml") as f:
+    with open("params.yaml") as f:  # load best params
         params = yaml.safe_load(f)
     train(params)
 
