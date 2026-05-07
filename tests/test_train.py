@@ -6,8 +6,8 @@ from src.train import train
 
 
 FEATURE_NAMES = [
-    "fixed_acidity", "volatile_acidity", "citric_acid", "residual_sugar",
-    "chlorides", "free_sulfur_dioxide", "total_sulfur_dioxide", "density",
+    "fixed acidity", "volatile acidity", "citric acid", "residual sugar",
+    "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density",
     "pH", "sulphates", "alcohol", "wine_type",
 ]
 
@@ -40,7 +40,9 @@ def test_train_returns_float(tmp_path):
     train_path, eval_path = _make_temp_data(tmp_path)
 
     # TODO 6-7: Goi ham train() va kiem tra ket qua
-    acc = train({"n_estimators": 10, "max_depth": 3}, data_path=train_path, eval_path=eval_path)
+    acc = train({"n_estimators": 10, "max_depth": 3, "learning_rate": 0.1,
+                 "random_state": 42, "n_jobs": 1, "verbosity": 0},
+                data_path=train_path, eval_path=eval_path)
     assert isinstance(acc, float)
     assert 0.0 <= acc <= 1.0
 
@@ -48,7 +50,8 @@ def test_train_returns_float(tmp_path):
 def test_metrics_file_created(tmp_path):
     train_path, eval_path = _make_temp_data(tmp_path)
     train(
-        {"n_estimators": 10, "max_depth": 3},
+        {"n_estimators": 10, "max_depth": 3, "learning_rate": 0.1,
+         "random_state": 42, "n_jobs": 1, "verbosity": 0},
         data_path=train_path,
         eval_path=eval_path,
     )
@@ -64,7 +67,8 @@ def test_metrics_file_created(tmp_path):
 def test_model_file_created(tmp_path):
     train_path, eval_path = _make_temp_data(tmp_path)
     train(
-        {"n_estimators": 10, "max_depth": 3},
+        {"n_estimators": 10, "max_depth": 3, "learning_rate": 0.1,
+         "random_state": 42, "n_jobs": 1, "verbosity": 0},
         data_path=train_path,
         eval_path=eval_path,
     )
