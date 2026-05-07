@@ -1,4 +1,12 @@
-n_estimators: 350
-max_depth: null
-min_samples_split: 2
-# trigger pipeline
+n_estimators: 341
+max_depth: 13
+learning_rate: 0.18859571026629224
+subsample: 0.9738651692622208
+colsample_bytree: 0.7043435561336902
+min_child_weight: 1
+gamma: 0.434528180538681
+reg_alpha: 0.6654581795554635
+reg_lambda: 0.282783243986215
+random_state: 42
+n_jobs: 1
+verbosity: 0

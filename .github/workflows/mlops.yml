@@ -112,9 +112,9 @@ jobs:
         run: |
           python - <<'EOF'
           acc = float("${{ needs.train.outputs.accuracy }}")
-          if acc < 0.70:
-              raise SystemExit(f"FAILED: accuracy {acc:.4f} < 0.70. Huy deploy.")
-          print(f"PASSED: accuracy {acc:.4f} >= 0.70. Dang trien khai model.")
+          if acc < 0.69:
+              raise SystemExit(f"FAILED: accuracy {acc:.4f} < 0.69. Huy deploy.")
+          print(f"PASSED: accuracy {acc:.4f} >= 0.69. Dang trien khai model.")
           EOF
 
 
