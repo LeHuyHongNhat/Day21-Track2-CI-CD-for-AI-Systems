@@ -1,23 +1,24 @@
-BANG SO SANH ACCURACY BUOC 2 vs BUOC 3
+BẢNG SO SÁNH ACCURACY BƯỚC 2 vs BƯỚC 3
 ========================================
 
-+----------+------------+----------+---------+
-| Buoc     | Du lieu    | Accuracy | F1      |
-+----------+------------+----------+---------+
-| Buoc 2   | 2.998 mau  | 0.6620   | 0.6618  |
-| Buoc 3   | 5.996 mau  | 0.7280   | 0.7281  |
-+----------+------------+----------+---------+
-| Delta    | +2.998 mau | +0.0660  | +0.0663 |
-|          | (+100%)    | (+9.97%) | (+10.0%)|
-+----------+------------+----------+---------+
++----------+----------------+----------+---------+
+| Bước     | Dữ liệu        | Accuracy | F1      |
++----------+----------------+----------+---------+
+| Bước 2   | 2.998 mẫu      | 0.6620   | 0.6618  |
+| Bước 3   | 5.996 mẫu      | 0.7280   | 0.7281  |
++----------+----------------+----------+---------+
+| Chênh lệch| +2.998 mẫu    | +0.0660  | +0.0663 |
+|          | (+100%)        | (+9.97%) | (+10.0%)|
++----------+----------------+----------+---------+
 
 Pipeline Runs:
-- Buoc 2: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511038348 (4/4 xanh)
-- Buoc 3: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511257339 (4/4 xanh)
+- Bước 2: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511038348 (4/4 xanh)
+- Bước 3: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511257339 (4/4 xanh)
 - Bonus:  https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25512893181 (4/4 xanh)
 
 Model: XGBoost (n_estimators=120, max_depth=7, learning_rate=0.1)
-Feature engineering: 8 interaction features (12 -> 20)
+Feature engineering: 8 đặc trưng tương tác (12 → 20)
 
-Nhan xet: Tang gap doi du lieu cai thien accuracy ~10%, tu 66.2% len 72.8%.
-Mo hinh khong overfit (CV-eval gap < 0.01), kha nang tong quat tot.
+Nhận xét: Tăng gấp đôi dữ liệu cải thiện accuracy +0.066 (+9.97%),
+từ 66.20% lên 72.80%. Mô hình không overfit (CV-Eval gap < 0.01),
+khả năng tổng quát tốt.
