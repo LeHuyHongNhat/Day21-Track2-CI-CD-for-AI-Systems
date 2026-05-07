@@ -84,6 +84,7 @@ jobs:
           import os
           s3 = boto3.client("s3")
           s3.upload_file("models/model.pkl", os.environ["CLOUD_BUCKET"], "models/latest/model.pkl")
+          s3.upload_file("models/model.json", os.environ["CLOUD_BUCKET"], "models/latest/model.json")
           print("Model uploaded to S3.")
           EOF
         env:

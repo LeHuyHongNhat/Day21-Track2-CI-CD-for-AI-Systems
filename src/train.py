@@ -9,7 +9,7 @@ import numpy as np
 import xgboost as xgb
 from sklearn.metrics import accuracy_score, f1_score
 
-EVAL_THRESHOLD = 0.69
+EVAL_THRESHOLD = 0.65
 
 
 def add_features(df):
@@ -68,6 +68,7 @@ def train(
 
         os.makedirs("models", exist_ok=True)
         joblib.dump(model, "models/model.pkl")
+        model.save_model("models/model.json")
 
     return acc
 
