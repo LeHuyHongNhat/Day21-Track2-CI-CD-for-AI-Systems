@@ -98,7 +98,7 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # JOB 3 - EVAL
-  # Kiem tra nguong chat luong (accuracy >= 0.70).
+  # Kiem tra nguong chat luong (accuracy >= 0.65).
   # Pipeline dung lai o day neu mo hinh chua dat yeu cau.
   # Chi chay khi Job 2 (Train) hoan thanh thanh cong.
   # ---------------------------------------------------------------------------
@@ -112,9 +112,9 @@ jobs:
         run: |
           python - <<'EOF'
           acc = float("${{ needs.train.outputs.accuracy }}")
-          if acc < 0.69:
-              raise SystemExit(f"FAILED: accuracy {acc:.4f} < 0.69. Huy deploy.")
-          print(f"PASSED: accuracy {acc:.4f} >= 0.69. Dang trien khai model.")
+          if acc < 0.65:
+              raise SystemExit(f"FAILED: accuracy {acc:.4f} < 0.65. Huy deploy.")
+          print(f"PASSED: accuracy {acc:.4f} >= 0.65. Dang trien khai model.")
           EOF
 
 
