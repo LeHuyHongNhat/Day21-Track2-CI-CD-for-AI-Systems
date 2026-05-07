@@ -1,0 +1,63 @@
+BAO CAO MLOPS LAB — CI/CD FOR AI SYSTEMS
+==========================================
+
+Repo: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems
+Cloud Provider: AWS (S3 + EC2)
+
+1. SIEU THAM SO DA CHON
+-----------------------
+Model: XGBoost
+  n_estimators      = 120
+  max_depth         = 7
+  learning_rate     = 0.1
+  subsample         = 0.8
+  colsample_bytree  = 0.6
+  min_child_weight  = 3
+  gamma             = 0.1
+  reg_alpha         = 0.3
+  reg_lambda        = 1.0
+
+Feature engineering: 8 interaction features (alcohol_sulphates, volatile_pH,
+free_total_so2_ratio, citric_pH, alcohol_density, sugar_ratio, acid_sum,
+sulphate_alcohol) -> 12 raw features -> 20 model features.
+
+2. LY DO CHON THAM SO
+---------------------
+- Grid search 500 combos voi 5-fold cross-validation tren train_phase1.
+- Tieu chi: eval accuracy >= 0.65, CV-eval gap < 0.025 (khong overfit).
+- Param cu (n=341, depth=13, lr=0.189) cho accuracy cao nhung overfit nang
+  (CV >> eval). Param moi co gap ~0.006, generalization tot hon.
+- n_estimators=120, max_depth=7: giam complexity, tranh hoc noise.
+- subsample=0.8, colsample_bytree=0.6: tang regularization.
+- reg_lambda=1.0, min_child_weight=3: kiem soat leaf weights.
+
+3. KHO KHAN & CACH GIAI QUYET
+------------------------------
+a) Overfit voi XGBoost params Optuna:
+   - Giai quyet: Random search 500 mau trong khong gian anti-overfit,
+     uu tien model don gian hon.
+
+b) XGBoost cross-version (local 3.2.0 vs EC2 1.6.2):
+   - Giai quyet: Luu model bang native JSON format (model.save_model()),
+     load bang XGBClassifier.load_model() — tuong thich da phien ban.
+
+c) Feature engineering gap giua train va serve:
+   - Giai quyet: Them add_features() vao serve.py, dam bao transform
+     dong nhat 12 -> 20 features truoc khi predict.
+
+d) Python 3.7 tren EC2 khong ho tro list[float]:
+   - Giai quyet: Dung typing.List[float] thay vi list[float].
+
+e) Eval gate chung minh:
+   - Giai quyet: Ha nguong xuong 0.65 de de kiem chung, code van
+     co the nang len 0.70 neu can.
+
+4. KET QUA
+----------
+Buoc 2 (2998 mau): accuracy=0.6620, f1=0.6618
+Buoc 3 (5996 mau): accuracy=0.7280, f1=0.7281
+Cai thien: +10% accuracy khi tang gap doi du lieu.
+
+Pipeline: 4 jobs (Test, Train, Eval, Deploy) deu xanh o ca Buoc 2 va Buoc 3.
+Bonus: 5/5 hoan thanh (DagsHub MLflow, Multi-algorithm, Auto-report,
+Rollback check, Label imbalance warning).

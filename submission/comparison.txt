@@ -1,0 +1,23 @@
+BANG SO SANH ACCURACY BUOC 2 vs BUOC 3
+========================================
+
++----------+------------+----------+---------+
+| Buoc     | Du lieu    | Accuracy | F1      |
++----------+------------+----------+---------+
+| Buoc 2   | 2.998 mau  | 0.6620   | 0.6618  |
+| Buoc 3   | 5.996 mau  | 0.7280   | 0.7281  |
++----------+------------+----------+---------+
+| Delta    | +2.998 mau | +0.0660  | +0.0663 |
+|          | (+100%)    | (+9.97%) | (+10.0%)|
++----------+------------+----------+---------+
+
+Pipeline Runs:
+- Buoc 2: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511038348 (4/4 xanh)
+- Buoc 3: https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25511257339 (4/4 xanh)
+- Bonus:  https://github.com/LeHuyHongNhat/Day21-Track2-CI-CD-for-AI-Systems/actions/runs/25512893181 (4/4 xanh)
+
+Model: XGBoost (n_estimators=120, max_depth=7, learning_rate=0.1)
+Feature engineering: 8 interaction features (12 -> 20)
+
+Nhan xet: Tang gap doi du lieu cai thien accuracy ~10%, tu 66.2% len 72.8%.
+Mo hinh khong overfit (CV-eval gap < 0.01), kha nang tong quat tot.

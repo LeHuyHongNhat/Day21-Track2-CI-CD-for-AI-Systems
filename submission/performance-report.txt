@@ -1,0 +1,25 @@
+============================================================
+BAO CAO HIỆU SUAT MO HINH
+============================================================
+
+Model type: xgboost
+Accuracy:  0.7280
+F1 Score:  0.7281
+
+Per-class metrics:
+Class      Label           Precision    Recall      
+-------------------------------------------------
+0          thap            0.7268       0.7688      
+1          trung_binh      0.6962       0.7269      
+2          cao             0.8250       0.6600      
+
+Confusion Matrix:
+           Pred0    Pred1    Pred2   
+Actual0    133      38       2       
+Actual1    50       165      12      
+Actual2    0        34       66      
+
+Label Distribution (train):
+  Class 0 (thap): 36.9%
+  Class 1 (trung_binh): 43.5%
+  Class 2 (cao): 19.6%
