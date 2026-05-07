@@ -14,6 +14,30 @@ EVAL_THRESHOLD = 0.65
 CLASS_LABELS = {0: "thap", 1: "trung_binh", 2: "cao"}
 
 
+def setup_mlflow():
+    """Configure MLflow tracking. Use DagsHub if creds available, else local."""
+    uri = os.environ.get("MLFLOW_TRACKING_URI", "")
+    user = os.environ.get("MLFLOW_TRACKING_USERNAME", "")
+    pwd = os.environ.get("MLFLOW_TRACKING_PASSWORD", "")
+
+    if uri and "dagshub" in uri and user and pwd:
+        os.environ["MLFLOW_TRACKING_URI"] = uri
+        os.environ["MLFLOW_TRACKING_USERNAME"] = user
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = pwd
+        mlflow.set_tracking_uri(uri)
+        try:
+            # Quick smoke test — try listing experiments
+            mlflow.search_experiments()
+            print(f"MLflow tracking: {uri}")
+            return
+        except Exception as e:
+            print(f"DagsHub connection failed ({e}), falling back to local MLflow.")
+
+    # Fallback to local
+    mlflow.set_tracking_uri("")
+    print("MLflow tracking: local (sqlite or file store)")
+
+
 def add_features(df):
     df = df.copy()
     df['alcohol_sulphates']     = df['alcohol'] * df['sulphates']
@@ -74,6 +98,9 @@ def train(
     X_eval  = add_features(X_eval)
 
     model_type = params.get("model_type", "xgboost")
+
+    setup_mlflow()
+
     with mlflow.start_run():
 
         mlflow.log_params(params)
